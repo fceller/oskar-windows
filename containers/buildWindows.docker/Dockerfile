@@ -9,15 +9,14 @@ RUN choco feature enable -n allowGlobalConfirmation
 RUN choco install llvm --version=16.0.6
 RUN choco install git
 RUN choco install cmake
-RUN choco install powershell
+#RUN choco install powershell-core # Do we need it? C:\\Program Files\\PowerShell\\7;
 
 # Set environment variables
-ENV PATH="C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;${PATH}"
-
+ENV PATH="C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;${PATH}"
 
 # Set the working directory where the build will be done
 WORKDIR /build
 
 # Default command
-ENTRYPOINT ["cmd.exe"]
+ENTRYPOINT ["C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe"]
 CMD ["-NoLogo", "-ExecutionPolicy", "Bypass"]
