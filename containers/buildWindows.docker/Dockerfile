@@ -6,10 +6,12 @@ RUN powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Se
 
 # Install packages required
 RUN choco feature enable -n allowGlobalConfirmation
-RUN choco install llvm --version=16.0.6
+#RUN choco install llvm --version=16.0.6
 RUN choco install git
 RUN choco install cmake
-#RUN choco install powershell-core # Do we need it? C:\\Program Files\\PowerShell\\7;
+RUN choco install visualstudio2022buildtools  --package-parameters "--allWorkloads --includeRecommended"
+RUN choco install vcredist140
+RUN choco install llvm --version=19.1.5
 
 # Set environment variables
 ENV PATH="C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;${PATH}"
