@@ -12,9 +12,12 @@ RUN choco install cmake
 RUN choco install visualstudio2022buildtools  --package-parameters "--allWorkloads --includeRecommended"
 RUN choco install vcredist140
 RUN choco install llvm --version=19.1.5
+RUN choco install python3
+
+RUN git config --global --add safe.directory C:/build/arangodb
 
 # Set environment variables
-ENV PATH="C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;${PATH}"
+ENV PATH="C:\\Python313;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;${PATH}"
 
 # Set the working directory where the build will be done
 WORKDIR /build
