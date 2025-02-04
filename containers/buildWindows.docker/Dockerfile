@@ -13,6 +13,8 @@ RUN choco install visualstudio2022buildtools  --package-parameters "--allWorkloa
 RUN choco install vcredist140
 RUN choco install llvm --version=19.1.5
 RUN choco install python3
+RUN choco install ninja
+RUN choco install openssl --version=3.3.2
 
 RUN git config --global --add safe.directory C:/build/arangodb
 
