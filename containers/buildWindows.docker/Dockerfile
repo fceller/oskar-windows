@@ -6,7 +6,7 @@ RUN powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Se
 
 # Install packages required
 RUN choco feature enable -n allowGlobalConfirmation
-#RUN choco install llvm --version=16.0.6
+
 RUN choco install git
 RUN choco install cmake
 RUN choco install visualstudio2022buildtools  --package-parameters "--allWorkloads --includeRecommended"
@@ -14,9 +14,19 @@ RUN choco install vcredist140
 RUN choco install llvm --version=19.1.5
 RUN choco install python3
 RUN choco install ninja
-RUN choco install openssl --version=3.3.2
+
+# Clone the Vcpkg repository
+RUN git clone --verbose  --progress https://github.com/microsoft/vcpkg.git C:\vcpkg
+
+# Bootstrap Vcpkg
+RUN C:\vcpkg\bootstrap-vcpkg.bat
+
+# Set the Vcpkg toolchain file environment variable
+ENV VCPKG_ROOT=C:\vcpkg
+ENV CMAKE_TOOLCHAIN_FILE="C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
 
 RUN git config --global --add safe.directory C:/build/arangodb
+RUN git config --global --add safe.directory C:/build/arangodb/3rdParty/gtest
 
 # Set environment variables
 ENV PATH="C:\\Python313;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;${PATH}"
