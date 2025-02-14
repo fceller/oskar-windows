@@ -14,6 +14,9 @@ RUN choco install vcredist140
 RUN choco install llvm --version=19.1.5
 RUN choco install python3
 RUN choco install ninja
+RUN choco install ccache
+RUN choco install nodejs
+RUN choco install yarn
 
 # Clone the Vcpkg repository
 RUN git clone --verbose  --progress https://github.com/microsoft/vcpkg.git C:\vcpkg
@@ -25,11 +28,10 @@ RUN C:\vcpkg\bootstrap-vcpkg.bat
 ENV VCPKG_ROOT=C:\vcpkg
 ENV CMAKE_TOOLCHAIN_FILE="C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
 
-RUN git config --global --add safe.directory C:/build/arangodb
-RUN git config --global --add safe.directory C:/build/arangodb/3rdParty/gtest
+RUN git config --global --add safe.directory C:/build/*
 
 # Set environment variables
-ENV PATH="C:\\Python313;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;${PATH}"
+ENV PATH="c:\\Program Files\\nodejs;c:\\Program Files (x86)\\Yarn\\bin;c:\\ProgramData\\chocolatey\\bin;C:\\Python313;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;${PATH}"
 
 # Set the working directory where the build will be done
 WORKDIR /build
