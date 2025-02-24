@@ -65,7 +65,7 @@ RUN git config --global --add safe.directory C:/build/*
 # Set environment variables
 ENV PATH="c:\\Program Files\\nodejs;c:\\Program Files (x86)\\Yarn\\bin;c:\\ProgramData\\chocolatey\\bin;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;C:\\msys64\\usr\\bin;C:\\msys64\\mingw64\\bin;C:\\Python313;${PATH}"
 
-# Copy start_build.ps script to the container
+# Copy start_build.ps1 script to the container
 COPY start_build.ps1 /
 
 # Set the working directory where the build will be done
