@@ -1,18 +1,18 @@
-# ArrangoDB 2025, all rights reserved
+# ArangoDB 2025, all rights reserved
 #
-# ArrangoDB build environment for Windows
+# ArangoDB build environment for Windows
 #
 # This Dockerfile creates a Windows container with the necessary tools to build ArangoDB on Windows. Build tools include Visual Studio 2022, CMake 3.31, LLVM 19.1.5, Python 3.13, Ninja, ccache, Node.js, Yarn, and MSYS2. The Vcpkg package manager is also installed and bootstrapped. The container is based on the official Windows image and uses Chocolatey as a package manager.
 #
 # To build container from oskar's root folder use:
-#    docker build -t arangodb-build-windows -f containers/buildWindows.docker/Dockerfile .
+#    docker build -t arangodb-windows-clang -f containers/buildWindows.docker/Dockerfile .
 #
 # To run the container (and start into PowerShell) use:
-#    docker run -h windows-clang-mingw-buildhost -it arangodb-build-windows
+#    docker run -h windows-clang-mingw-buildhost -it arangodb-windows-clang
 #
 # IMPORTANT- specifyng being "host-platform-mingw-name" is important for the (icu-legacy) build scripts to work correctly!
 #
-# To start (latest) ArrangoDB build use:
+# To start (latest) ArangoDB build use:
 #   ./start_build.ps
 #
 # --------------------------------------------------------------------------------

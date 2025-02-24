@@ -1,6 +1,6 @@
-# (c) ArrangoDB, 2025
+# (c) ArangoDB, 2025
 
-Write-Output "ArrangoDB build latest started!"
+Write-Output "ArangoDB build latest started!"
 
 git clone --recurse-submodules --jobs 8 https://github.com/arangodb/arangodb
 
