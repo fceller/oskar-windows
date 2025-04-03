@@ -33,6 +33,12 @@ RUN choco install ccache
 RUN choco install nodejs
 RUN choco install yarn
 
+# Install Visual Studio Build Tools with the Windows SDK
+RUN powershell -Command \
+    Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools.exe; \
+    Start-Process -Wait -FilePath .\vs_buildtools.exe -ArgumentList '--quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset --add Microsoft.VisualStudio.Component.VC.Llvm.Clang --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Llvm.Clang --add Microsoft.VisualStudio.Component.VC.CMake.Project'; \
+    Remove-Item -Force vs_buildtools.exe
+
 # Set environment variables
 ENV MSYS2_PATH_TYPE inherit
 ENV MSYS2_DIR C:\\msys64
@@ -42,12 +48,6 @@ RUN powershell -Command Invoke-WebRequest -Uri https://repo.msys2.org/distrib/x8
 
 # Update MSYS2 and install base development tools (establish a minwgw64 environment)
 RUN C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -Syu --noconfirm" && C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain"
-
-# Install Visual Studio Build Tools with the Windows SDK
-RUN powershell -Command \
-    Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools.exe; \
-    Start-Process -Wait -FilePath .\vs_buildtools.exe -ArgumentList '--quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset --add Microsoft.VisualStudio.Component.VC.Llvm.Clang --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Llvm.Clang --add Microsoft.VisualStudio.Component.VC.CMake.Project'; \
-    Remove-Item -Force vs_buildtools.exe
 
 # Clone the Vcpkg repository
 RUN git clone --verbose --progress https://github.com/microsoft/vcpkg.git C:\vcpkg
