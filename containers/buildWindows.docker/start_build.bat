@@ -1,4 +1,4 @@
-# (c) ArangoDB, 2025
+@REM (c) ArangoDB, 2025
 
 echo "ArangoDB build on windows latest started!"
 

@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------------------
 #
 # Use the official Windows image as a base
-FROM mcr.microsoft.com/windows/servercore:ltsc2022
+FROM mcr.microsoft.com/windows/servercore:ltsc2025
 
 # Install Chocolatey package manager
 RUN powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Bypass -Scope Process; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
@@ -27,11 +27,6 @@ RUN powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Se
 RUN choco feature enable -n allowGlobalConfirmation
 
 RUN choco install git
-RUN choco install cmake
-# install visual studio 2022 build tools
-RUN choco install visualstudio2022buildtools  --package-parameters "--allWorkloads --includeRecommended"
-RUN choco install vcredist140
-RUN choco install llvm --version=19.1.5
 RUN choco install python3
 RUN choco install ninja
 RUN choco install ccache
@@ -48,6 +43,12 @@ RUN powershell -Command Invoke-WebRequest -Uri https://repo.msys2.org/distrib/x8
 # Update MSYS2 and install base development tools (establish a minwgw64 environment)
 RUN C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -Syu --noconfirm" && C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain"
 
+# Install Visual Studio Build Tools with the Windows SDK
+RUN powershell -Command \
+    Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools.exe; \
+    Start-Process -Wait -FilePath .\vs_buildtools.exe -ArgumentList '--quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset --add Microsoft.VisualStudio.Component.VC.Llvm.Clang --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Llvm.Clang --add Microsoft.VisualStudio.Component.VC.CMake.Project'; \
+    Remove-Item -Force vs_buildtools.exe
+
 # Clone the Vcpkg repository
 RUN git clone --verbose --progress https://github.com/microsoft/vcpkg.git C:\vcpkg
 
@@ -63,14 +64,15 @@ ENV CMAKE_TOOLCHAIN_FILE="C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
 RUN git config --global --add safe.directory C:/build/*
 
 # Set environment variables
-ENV PATH="c:\\Program Files\\nodejs;c:\\Program Files (x86)\\Yarn\\bin;c:\\ProgramData\\chocolatey\\bin;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;C:\\msys64\\usr\\bin;C:\\msys64\\mingw64\\bin;C:\\Python313;${PATH}"
+ENV PATH="C:\\msys64\\mingw64\\bin;c:\\Program Files\\nodejs;c:\\Program Files (x86)\\Yarn\\bin;c:\\ProgramData\\chocolatey\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;C:\\msys64\\usr\\bin;C:\\Python313;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64${PATH}"
 
-# Copy start_build.ps1 script to the container
+# Copy start_build.ps1 / setvar scripts to the container
 COPY start_build.ps1 /
+COPY setvar.bat /
+
+SHELL ["C:\\Windows\\SysWOW64\\cmd.exe","/S","/C"]
 
 # Set the working directory where the build will be done
 WORKDIR /
 
-# Default command
-ENTRYPOINT ["C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe"]
-CMD ["-NoLogo", "-ExecutionPolicy", "Bypass"]
+ENTRYPOINT ["cmd", "/S", "/K", "c:\\setvar.bat"]
