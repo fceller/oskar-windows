@@ -27,11 +27,12 @@ RUN powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Se
 RUN choco feature enable -n allowGlobalConfirmation
 
 RUN choco install git
-RUN choco install python3
+RUN choco install python311 --params "/NoLockdown /InstallDir:C:\\Python311"
 RUN choco install ninja
 RUN choco install ccache
 RUN choco install nodejs
 RUN choco install yarn
+# RUN choco install mingw
 
 # Install Visual Studio Build Tools with the Windows SDK
 RUN powershell -Command \
@@ -40,14 +41,14 @@ RUN powershell -Command \
     Remove-Item -Force vs_buildtools.exe
 
 # Set environment variables
-ENV MSYS2_PATH_TYPE inherit
-ENV MSYS2_DIR C:\\msys64
+# ENV MSYS2_PATH_TYPE inherit
+# ENV MSYS2_DIR C:\\msys64
 
-# Download and install MSYS2
-RUN powershell -Command Invoke-WebRequest -Uri https://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20241208.sfx.exe -OutFile msys2-installer.exe; Start-Process -FilePath msys2-installer.exe -NoNewWindow -Wait; Remove-Item -Force msys2-installer.exe
+# # Download and install MSYS2
+# RUN powershell -Command Invoke-WebRequest -Uri https://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20241208.sfx.exe -OutFile msys2-installer.exe; Start-Process -FilePath msys2-installer.exe -NoNewWindow -Wait; Remove-Item -Force msys2-installer.exe
 
-# Update MSYS2 and install base development tools (establish a minwgw64 environment)
-RUN C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -Syu --noconfirm" && C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain"
+# # Update MSYS2 and install base development tools (establish a minwgw64 environment)
+# RUN C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -Syu --noconfirm" && C:\\msys64\\usr\\bin\\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain"
 
 # Clone the Vcpkg repository
 RUN git clone --verbose --progress https://github.com/microsoft/vcpkg.git C:\vcpkg
@@ -64,7 +65,7 @@ ENV CMAKE_TOOLCHAIN_FILE="C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
 RUN git config --global --add safe.directory C:/build/*
 
 # Set environment variables
-ENV PATH="C:\\msys64\\mingw64\\bin;c:\\Program Files\\nodejs;c:\\Program Files (x86)\\Yarn\\bin;c:\\ProgramData\\chocolatey\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;C:\\msys64\\usr\\bin;C:\\Python313;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64${PATH}"
+ENV PATH="C:\\msys64\\mingw64\\bin;c:\\Program Files\\nodejs;c:\\Program Files (x86)\\Yarn\\bin;c:\\ProgramData\\chocolatey\\bin;C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0;C:\\msys64\\usr\\bin;C:\\Python311;C:\\Program Files\\Git\\bin;C:\\Windows\\SysWOW64${PATH}"
 
 # Copy start_build.ps1 / setvar scripts to the container
 COPY *.ps1 /
